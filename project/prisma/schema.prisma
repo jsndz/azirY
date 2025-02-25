@@ -17,6 +17,8 @@ model User {
   id          String     @id @default(uuid())
   username    String
   password    String?
+  name        String?
+  profilePic  String?
   solWalletId String?
   SolWallet   SolWallet?
   INRWalletId String?
