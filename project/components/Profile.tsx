@@ -2,9 +2,10 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
+import PrimaryButton from "./PrimaryButton";
 
-const Profile = () => {
+const Profile = ({ publicKey }: { publicKey: string }) => {
   const session = useSession();
   const router = useRouter();
 
@@ -22,6 +23,7 @@ const Profile = () => {
           name={session?.data?.user?.name ?? ""}
           image={session?.data?.user?.image ?? ""}
         ></Greeting>
+        <Assets publicKey={publicKey}></Assets>
       </div>
     </div>
   );
@@ -41,4 +43,21 @@ const Greeting = ({ name, image }: { name: string; image: string }) => {
     </div>
   );
 };
+
+function Assets({ publicKey }: { publicKey: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div>
+      {publicKey}
+      <PrimaryButton
+        onClick={() => {
+          navigator.clipboard.writeText(publicKey);
+          setCopied(true);
+        }}
+      >
+        {copied ? "copied" : "copy"}
+      </PrimaryButton>
+    </div>
+  );
+}
 export default Profile;
