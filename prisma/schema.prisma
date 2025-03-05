@@ -14,32 +14,32 @@ datasource db {
 }
 
 model User {
-  id              String    @id  @default(uuid())  
-  username        String
-  sub             String    @default("")
-  name            String?
-  profilePicture  String?
-  password        String?
-  solWalletId     String?
-  solWallet       SolWallet?
-  inrWalletId     String?
-  inrWallet       InrWalet?
-  provider        Provider
+  id          String     @id @default(uuid())
+  username    String
+  sub         String     @default("")
+  password    String?
+  name        String?
+  profilePic  String?
+  solWalletId String?
+  solWallet   SolWallet?
+  INRWalletId String?
+  inrWallet   INRWallet?
+  provider    Provider
 }
 
-model InrWalet {
-  id          String    @id  @default(uuid())  
-  balance     Int       
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id],onDelete: Cascade)
+model INRWallet {
+  id      String @id @default(uuid())
+  balance Int
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 model SolWallet {
-  id          String   @id  @default(uuid())
-  publicKey   String
-  privateKey  String
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id],onDelete: Cascade)
+  id         String @id @default(uuid())
+  publicKey  String
+  privateKey String
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id],onDelete: Cascade)
 }
 
 

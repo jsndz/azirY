@@ -2,7 +2,7 @@ import { Keypair } from "@solana/web3.js";
 import GoogleProvider from "next-auth/providers/google";
 
 import db from "@/db";
-import { Session } from "next-auth";
+import { getServerSession, Session } from "next-auth";
 
 export interface session extends Session {
   user: {
@@ -25,20 +25,23 @@ export const authconfig = {
   callbacks: {
     session: ({ session, token }: any): session => {
       const newSession: session = session as session;
-      if (newSession.user && token.id) {
+      if (newSession.user && token.uid) {
         //@ts-ignore
         newSession.user.uid = token.uid ?? "";
       }
       return newSession;
     },
     async jwt({ token, account, profile }: any) {
+
+      
       const user = await db.user.findFirst({
         where: {
           sub: account?.providerAccountId ?? "",
         },
       });
+      
       if (user) {
-        token.id = user.id;
+        token.uid = user.id;
       }
       return token;
     },
@@ -56,21 +59,25 @@ export const authconfig = {
         if (userDb) {
           return true;
         }
-        const keys = Keypair.generate();
+        const keypair = Keypair.generate();
+        const publicKey = keypair.publicKey.toBase58();
+        const privateKey = keypair.secretKey;
         await db.user.create({
           data: {
             username: email,
             name: profile?.name,
-            //@ts-ignore
+             //@ts-ignore
+
             profilePic: profile?.picture,
             provider: "Google",
-            SolWallet: {
+            sub: account.providerAccountId,
+            solWallet: {
               create: {
-                publicKey: keys.publicKey.toBase58(),
-                privateKey: keys.secretKey.toString(),
+                publicKey: publicKey,
+                privateKey: privateKey.toString(),
               },
             },
-            INRWallet: {
+            inrWallet: {
               create: {
                 balance: 0,
               },
@@ -83,3 +90,5 @@ export const authconfig = {
     },
   },
 };
+
+

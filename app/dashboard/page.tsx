@@ -1,4 +1,4 @@
-"use client";
+
 import Profile from "@/components/Profile";
 import { authconfig } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -8,7 +8,6 @@ import db from "@/db";
 async function getWallet() {
 
   const session = await getServerSession(authconfig);
-  console.log(session);
   
   const userWallet = await db.solWallet.findFirst({
     where: { userId: session?.user.uid },
@@ -21,15 +20,17 @@ async function getWallet() {
       error: "No wallet found",
     };
   }
+  
   return { error: null, userWallet };
 }
-const page = async () => {
+async function page()  {
   const wallet = await getWallet();
   if (wallet.error || !wallet.userWallet?.publicKey) {
     return <>No solana wallet found</>;
   }
   return (
     <div>
+      <h1>Dashbord</h1>
       <Profile publicKey={wallet.userWallet.publicKey}></Profile>
     </div>
   );

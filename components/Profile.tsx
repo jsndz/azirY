@@ -6,11 +6,11 @@ import React, { useState } from "react";
 import PrimaryButton from "./PrimaryButton";
 
 const Profile = ({ publicKey }: { publicKey: string }) => {
-  const session = useSession();
+  const session =  useSession();
   const router = useRouter();
 
   if (session.status == "loading") {
-    <div>Loading</div>;
+   return ( <div>Loading</div>);
   }
   if (!session.data?.user) {
     router.push("/");
@@ -33,12 +33,7 @@ const Greeting = ({ name, image }: { name: string; image: string }) => {
   return (
     <div className="">
       {" "}
-      <Image
-        src={image || ""}
-        alt="user profile image"
-        width={100}
-        height={100}
-      ></Image>
+      <img src={image} className="rounded-full w-16 h-16 mr-4" />
       <h4>Welcome Back , {name}!</h4>
     </div>
   );
