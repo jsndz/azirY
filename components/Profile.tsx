@@ -4,21 +4,22 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import PrimaryButton from "./PrimaryButton";
+import { useTokens } from "@/app/api/hooks/useTokens";
 
 const Profile = ({ publicKey }: { publicKey: string }) => {
-  const session =  useSession();
+  const session = useSession();
   const router = useRouter();
 
   if (session.status == "loading") {
-   return ( <div>Loading</div>);
+    return <div>Loading</div>;
   }
   if (!session.data?.user) {
     router.push("/");
     return null;
   }
   return (
-    <div className="flex justify-center">
-      <div className="max-w-4xl  rounded">
+    <div className="flex justify-center items-center ">
+      <div className="max-w-4xl border-white border-4  rounded">
         <Greeting
           name={session?.data?.user?.name ?? ""}
           image={session?.data?.user?.image ?? ""}
@@ -34,13 +35,19 @@ const Greeting = ({ name, image }: { name: string; image: string }) => {
     <div className="">
       {" "}
       <img src={image} className="rounded-full w-16 h-16 mr-4" />
-      <h4>Welcome Back , {name}!</h4>
+      <h4 className="text-green-300">Welcome Back , {name}!</h4>
     </div>
   );
 };
 
 function Assets({ publicKey }: { publicKey: string }) {
   const [copied, setCopied] = useState(false);
+  const { loading, tokenBalance } = useTokens(publicKey);
+  if (loading) {
+    return "...Loading";
+  }
+  console.log(tokenBalance);
+
   return (
     <div>
       {publicKey}
@@ -52,6 +59,10 @@ function Assets({ publicKey }: { publicKey: string }) {
       >
         {copied ? "copied" : "copy"}
       </PrimaryButton>
+
+      <div className="text-green-600">
+        {JSON.stringify(tokenBalance?.totalBalance)}
+      </div>
     </div>
   );
 }

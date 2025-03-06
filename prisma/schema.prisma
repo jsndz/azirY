@@ -16,7 +16,7 @@ datasource db {
 model User {
   id          String     @id @default(uuid())
   username    String
-  sub         String     @default("")
+  sub         String     @default("") //represents the user id from the provider(google)
   password    String?
   name        String?
   profilePic  String?

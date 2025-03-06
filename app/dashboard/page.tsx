@@ -29,8 +29,7 @@ async function page()  {
     return <>No solana wallet found</>;
   }
   return (
-    <div>
-      <h1>Dashbord</h1>
+    <div className="width-full height-full ">
       <Profile publicKey={wallet.userWallet.publicKey}></Profile>
     </div>
   );
