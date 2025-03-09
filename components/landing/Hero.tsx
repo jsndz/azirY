@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const route = useRouter();
   return (
     <section className="bg-gray-900 text-white py-20">
       <div className="container mx-auto px-6 text-center">
@@ -13,6 +15,9 @@ export default function Hero() {
         <Button
           size="lg"
           className="bg-wazirx-yellow text-black hover:bg-wazirx-blue hover:text-white"
+          onClick={() => {
+            route.push("/dashboard");
+          }}
         >
           Start Trading Now
         </Button>

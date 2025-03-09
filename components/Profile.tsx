@@ -6,11 +6,14 @@ import React, { useState } from "react";
 import PrimaryButton from "./PrimaryButton";
 import { useTokens } from "@/app/api/hooks/useTokens";
 import { TokenDetails } from "./TokenDetails";
+import { Swap } from "./Swap";
+
+const Tabs: string[] = ["Assets", "Swap"];
 
 const Profile = ({ publicKey }: { publicKey: string }) => {
   const session = useSession();
   const router = useRouter();
-
+  const [tab, setTab] = useState("Assets");
   if (session.status === "loading") {
     return <div className="text-center text-white">Loading...</div>;
   }
@@ -25,7 +28,23 @@ const Profile = ({ publicKey }: { publicKey: string }) => {
           name={session.data.user.name ?? ""}
           image={session.data.user.image ?? ""}
         />
-        <Assets publicKey={publicKey} />
+        {Tabs.map((tab) => {
+          return (
+            <button
+              className="px-6 py-3 ml-5 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onClick={() => {
+                setTab(tab);
+              }}
+            >
+              {tab}
+            </button>
+          );
+        })}
+        {tab == "Assets" ? (
+          <Assets publicKey={publicKey}></Assets>
+        ) : tab == "Swap" ? (
+          <Swap></Swap>
+        ) : null}
       </div>
     </div>
   );
