@@ -1,5 +1,4 @@
 import { tokenwithBalance } from "@/app/api/hooks/useTokens";
-import { tokenDeatils } from "@/lib/constants";
 
 export function TokenDetails({ tokens }: { tokens: tokenwithBalance[] }) {
   return (
@@ -23,7 +22,7 @@ export function TokenInfo({ token }: { token: tokenwithBalance }) {
       <div className="text-white">
         <p className="font-semibold text-lg">{token.name}</p>
         <p className="text-sm text-gray-300">
-          USDC Balance: {token.usdcBalance}
+          USDC Balance: {token.usdBalance}
         </p>
         <p className="text-sm text-gray-300">Balance: {token.balance}</p>
       </div>

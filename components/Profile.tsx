@@ -31,6 +31,7 @@ const Profile = ({ publicKey }: { publicKey: string }) => {
         {Tabs.map((tab) => {
           return (
             <button
+              key={tab}
               className="px-6 py-3 ml-5 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
               onClick={() => {
                 setTab(tab);
@@ -66,6 +67,7 @@ function Assets({ publicKey }: { publicKey: string }) {
   if (loading) {
     return <div className="text-center text-gray-400">Loading assets...</div>;
   }
+  console.log(tokenBalance?.tokens);
 
   return (
     <div className="p-4 bg-gray-700 rounded-lg shadow-md">
@@ -88,6 +90,7 @@ function Assets({ publicKey }: { publicKey: string }) {
       <div className="text-green-400 text-lg font-semibold mb-2">
         Total Balance: {JSON.stringify(tokenBalance?.totalBalance)}
       </div>
+
       <TokenDetails tokens={tokenBalance?.tokens || []} />
     </div>
   );

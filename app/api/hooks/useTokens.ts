@@ -1,10 +1,10 @@
-import { tokenDeatils } from "@/lib/constants";
+import { tokenDetails } from "@/lib/tokens";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export interface tokenwithBalance extends tokenDeatils {
+export interface tokenwithBalance extends tokenDetails {
   balance: string;
-  usdcBalance: string;
+  usdBalance: string;
 }
 
 export function useTokens(address: string) {
