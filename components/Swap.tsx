@@ -1,6 +1,8 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { SUPPORTED_TOKENS, tokenDetails } from "../lib/tokens";
 import { tokenwithBalance } from "@/app/api/hooks/useTokens";
+import PrimaryButton from "./PrimaryButton";
+import axios from "axios";
 
 export const Swap = ({
   tokenBalance,
@@ -14,6 +16,29 @@ export const Swap = ({
 }) => {
   const [baseAsset, setBaseAsset] = useState(SUPPORTED_TOKENS[0]);
   const [quoteAsset, setQuoteAsset] = useState(SUPPORTED_TOKENS[1]);
+  const [baseAmount, setBaseAmount] = useState<string>();
+  const [quoteAmount, setQuoteAmount] = useState<string>();
+  const [quoteResponse, setQuoteResponse] = useState(null);
+  useEffect(() => {
+    if (!baseAmount) {
+      return;
+    }
+    axios
+      .get(
+        `https://api.jup.ag/swap/v1/quote?inputMint=${
+          baseAsset.mint
+        }&outputMint=${quoteAsset.mint}&amount=${
+          Number(baseAmount) * 10 ** baseAsset.decimals
+        }&slippageBps=50&restrictIntermediateTokens=true`
+      )
+      .then((res) => {
+        setQuoteAmount(
+          (Number(res.data.outAmount) / 10 ** quoteAsset.decimals).toString()
+        );
+        setQuoteResponse(res.data);
+      });
+  }, [baseAmount, quoteAmount, baseAsset, quoteAsset]);
+
   return (
     <div>
       <SwapInputRow
@@ -21,6 +46,9 @@ export const Swap = ({
         title="FOR"
         onSelect={(asset) => {
           setBaseAsset(asset);
+        }}
+        onAmountChange={(amount) => {
+          setBaseAmount(amount);
         }}
         subtitle={
           <div>
@@ -30,6 +58,7 @@ export const Swap = ({
             } ${baseAsset.name}`}
           </div>
         }
+        amount={baseAmount}
       ></SwapInputRow>
       <div className="flex justify-center">
         <div
@@ -57,7 +86,27 @@ export const Swap = ({
             } ${quoteAsset.name}`}
           </div>
         }
+        amount={quoteAmount}
+        onAmountChange={(amount) => {
+          setQuoteAmount(amount);
+        }}
       ></SwapInputRow>
+      <PrimaryButton
+        onClick={async () => {
+          try {
+            const res = await axios.post("/api/swap", {
+              quoteResponse,
+            });
+            if (res.data.txnId) {
+              alert("swapped");
+            }
+          } catch (error) {
+            alert("not swapped");
+          }
+        }}
+      >
+        Swap
+      </PrimaryButton>
     </div>
   );
 };
@@ -67,16 +116,25 @@ export const SwapInputRow = ({
   selectedToken,
   title,
   subtitle,
+  amount,
+  onAmountChange,
 }: {
   onSelect: (asset: tokenDetails) => void;
   selectedToken: tokenDetails;
   title: string;
   subtitle: ReactNode;
+  amount?: string;
+  onAmountChange: (amount: string) => void;
 }) => {
   return (
     <div>
       <p>{title}</p>
       <p>{subtitle}</p>
+      <input
+        onChange={(e) => onAmountChange(e.target.value)}
+        value={amount}
+        dir="rtl"
+      ></input>
       <AssetSelector
         selectedToken={selectedToken}
         onSelect={onSelect}
